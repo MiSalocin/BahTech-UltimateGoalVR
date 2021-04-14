@@ -10,12 +10,12 @@ public class Config {
     /**
      *  Width of the subscene, in pixels
      */
-    public static final double SUBSCENE_WIDTH = 800;
+    public static final double SUBSCENE_WIDTH =600;
 
     /**
      * Whether to use "Virtual Gamepad" (true -> Virtual gamepad, false -> Real gamepad)
      */
-    public static final boolean USE_VIRTUAL_GAMEPAD = false;
+    public static final boolean USE_VIRTUAL_GAMEPAD = true;
 
     /**
      * Enum for the Game

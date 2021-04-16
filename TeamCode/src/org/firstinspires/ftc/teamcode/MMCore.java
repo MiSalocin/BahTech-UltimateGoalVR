@@ -8,24 +8,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "MMCore", group = "BahTech")
 public class MMCore extends LinearOpMode {
 
-    // Map the hardware to autonomous and teleOp
+    // Map the hardware to autonomous and TeleOp
     final MMMovement move = new MMMovement();
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         // Create the Hardware Map and start IMU
         move.defHardware(hardwareMap);
 
-        move.turn(1,true, 90);
-        move.turn(1,false, 90);
-        move.turn(1,true, 90);
-
         // Run once you press PLAY
         waitForStart();
-
-        // Program used to define if it will base itself using the robot or the arena
-        double shooterForce = 0;
 
         // Run repeatedly after you press play
         while(opModeIsActive()){
@@ -36,34 +29,18 @@ public class MMCore extends LinearOpMode {
             double rightX = gamepad1.right_stick_x;
             boolean lb = gamepad1.left_bumper;
             boolean rb = gamepad1.right_bumper;
-            boolean dpadRight = gamepad1.dpad_right;
-            boolean dPadLeft = gamepad1.dpad_left;
 
-            if(dPadLeft && move.getShooterForce()>=0){
-                shooterForce -= 0.01;
-            }else if(dpadRight && move.getShooterForce()<=1){
-                shooterForce += 0.01;
-            }
-            move.setShooterForce(shooterForce);
+            if (gamepad1.y) move.inverter(1);
+            if (gamepad1.x) move.inverter(1);
+            move.shoot(gamepad1.right_trigger > 50, 1);
+            move.shoot(gamepad1.left_trigger > 50, 0.8);
+            move.moveByArena(leftY, leftX, rightX, lb, rb);
 
-            if (gamepad1.x) move.ninetyTurn(0.5);
-            if (gamepad1.y) move.ninetyTurn( 0.5);
-
-            telemetry.addData("LeftX", String.format("%.2f", leftX));
-            telemetry.addData("LeftY", String.format("%.2f", leftY));
-            telemetry.addData("RightX", String.format("%.2f", rightX));
-            telemetry.addData("Angles", String.format("%.2f", move.gerAngles()));
-            telemetry.addData("","");
+            telemetry.addData("Angles", String.format("%.2f", move.getAngles()));
             telemetry.addData("Front Left Motor", String.format("%.2f", move.getFlForce()));
             telemetry.addData("Front Right Motor", String.format("%.2f", move.getFrForce()));
             telemetry.addData("Back Left Motor", String.format("%.2f", move.getBlForce()));
             telemetry.addData("Back Right Motor", String.format("%.2f", move.getBrForce()));
-            telemetry.addData("","");
-            telemetry.addData("Intern", String.format("%.2f", move.getIntern()));
-            telemetry.addData("Extern", String.format("%.2f", move.getExtern()));
-
-            move.moveByArena(leftY, leftX, rightX, lb, rb);
-
             telemetry.update();
         }
     }
